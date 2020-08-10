@@ -23,12 +23,23 @@ class Cookbook
   # Receives an instance of Recipe
   def add_recipe(recipe)
     @recipes << recipe
-    save_csv
+    save
   end
 
   def remove_recipe(index)
     # Array CRUD: Delete by index
     @recipes.delete_at(index)
+    save
+  end
+
+  # Should return a Recipe
+  # with the right index
+  def find(index)
+    # Arrau CRUD: Read
+    @recipes[index]
+  end
+
+  def save
     save_csv
   end
 
@@ -39,10 +50,18 @@ class Cookbook
   def load_csv
     CSV.foreach(@csv_filepath) do |row|
       # Read the data from the CSV row
-      name = row.first
-      description = row.last
+
+      # Converting the String "bolean" to a REAL boolean
+      # done = row[3] == "true"
+
+      attributes = {
+        name: row[0],
+        description: row[1],
+        prep_time: row[2],
+        done: row[3] == "true"
+      }
       # Create a Recipe instance in-memory
-      recipe = Recipe.new(name, description)
+      recipe = Recipe.new(attributes)
       @recipes << recipe
     end
   end
